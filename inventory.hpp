@@ -2,8 +2,11 @@
 #define INVENTORY_HPP
 
 #include "stack.hpp"
-#include "dictionary.hpp"
+//#include "dictionary.hpp"
 #include "item.hpp"
+//#include "vector.hpp"
+#include <vector>
+#include <map>
 
 
 class Inventory
@@ -23,7 +26,7 @@ public:
 
 private:
 
-    Dictionary<uint32_t, Item> _inventoryData;
+    std::map<uint32_t, Item> _inventoryData;
 };
 
 

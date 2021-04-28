@@ -13,10 +13,13 @@ Encounter::Encounter()
 // SINCE OUR DICTIONARY HOLDS POINTERS
 Encounter::~Encounter()
 {
-    Vector<uint32_t> keys = _encounterDictionary.Keys();
-    for(int i = 0; i < keys.Count(); i ++)
+    std::vector<uint32_t> keys;             
+    for(auto elem : _encounterDictionary)
+        keys.push_back(elem.first);
+
+    for(int i = 0; i < keys.size(); i ++)
     {
-        Entity * toDelete = _encounterDictionary.At(keys.At(i));
+        Entity * toDelete = _encounterDictionary.at(keys.at(i));
         delete toDelete;
     }
 
@@ -32,7 +35,9 @@ Encounter::~Encounter()
 //       back of the list.
 void Encounter::AddEntity(Entity *entity)
 {
-    if(!_encounterDictionary.Insert(entity->UID(), entity))
+    _encounterDictionary.emplace(entity->UID(), entity);   
+
+    if(entity->UID())  // emplace does not have a boolean output, so I need to check after adding it if it exists in the map
     {
         std::cout << "FAILED TO ADD ENTITY: " << entity->UID() << std::endl;
     }
@@ -47,9 +52,9 @@ void Encounter::AddEntity(Entity *entity)
 // HINT: use Entity::OutputStatus() to print the entity's status
 void Encounter::PrintEntityStatus(uint32_t entityID) const
 {
-    if(_encounterDictionary.Contains(entityID))
+    if(_encounterDictionary.count(entityID) != 0)
     {
-        Entity * tmp = _encounterDictionary.At(entityID);
+        Entity * tmp = _encounterDictionary.at(entityID);
         tmp->OutputStatus();        
 
 
@@ -67,17 +72,20 @@ void Encounter::PrintEntityStatus(uint32_t entityID) const
 // HINT: You are going to use Entity::OutputStatus() 
 void Encounter::PrintAllStatuses() const
 {
-    Vector<uint32_t> keys = _encounterDictionary.Keys();
-    for(int i = 0; i < keys.Count(); i ++)
+    std::vector<uint32_t> keys;                 //using strange keys method
+    for(auto elem : _encounterDictionary)
+        keys.push_back(elem.first);
+
+    for(int i = 0; i < keys.size(); i ++)
     {
-        Entity * entity = _encounterDictionary.At(keys.At(i));
+        Entity * entity = _encounterDictionary.at(keys.at(i));
 
         if(entity != nullptr)
         {
             entity->OutputStatus();
         }
 
-        if(i < keys.Count() - 1)
+        if(i < keys.size() - 1)
         {
             Bars();
         }
@@ -88,18 +96,18 @@ void Encounter::PrintAllStatuses() const
 // provided for you
 void Encounter::UseAction(uint32_t attackerUID, uint32_t targetUID, const std::string &spellName, const std::string & args)
 {
-    if(!_encounterDictionary.Contains(attackerUID))
+    if(_encounterDictionary.count(attackerUID) == 0) //edited to use count which is not boolean
     {
         PrintBadAccessError(attackerUID);
     }
-    if(!_encounterDictionary.Contains(targetUID))
+    if(_encounterDictionary.count(targetUID) == 0) //edited to use count which is not boolean
     {
         PrintBadAccessError(targetUID);
     }
 
 
-    Entity *attacker = _encounterDictionary.At(attackerUID);
-    Entity *target = _encounterDictionary.At(targetUID);
+    Entity *attacker = _encounterDictionary.at(attackerUID);
+    Entity *target = _encounterDictionary.at(targetUID);
 
 
     if(attacker == nullptr)
@@ -120,7 +128,7 @@ void Encounter::UseAction(uint32_t attackerUID, uint32_t targetUID, const std::s
     {
         attacker->LootAnEntity(target);
         
-        if(!_encounterDictionary.Remove(target->UID()))
+        if(_encounterDictionary.erase(target->UID()) == 0) 
         {
             std::cout << "REMOVAL FAILED" << std::endl;
         }

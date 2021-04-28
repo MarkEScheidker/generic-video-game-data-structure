@@ -12,7 +12,7 @@ void Inventory::Init(JsonItemBuilder &jsonBuilder, const std::vector<int> & uids
 {
     for(const auto & uid : uids)
     {
-        _inventoryData.Insert(uid, {jsonBuilder, static_cast<uint32_t>(uid)});
+        _inventoryData.emplace(uid, {jsonBuilder, static_cast<uint32_t>(uid)});  //emplace not working here, something about being overloaded
     }
 
 
@@ -20,16 +20,16 @@ void Inventory::Init(JsonItemBuilder &jsonBuilder, const std::vector<int> & uids
 
 void Inventory::AddItemToInventory(const Item &item)
 {
-    _inventoryData.Insert(item.UID(), item);
+    _inventoryData.emplace(item.UID(), item);
 }
 
 
 Item Inventory::LootAnItem(uint32_t uid)
 {
-    if(_inventoryData.Contains(uid))
+    if(_inventoryData.count(uid) != 0)
     {
-        Item retval = _inventoryData.At(uid);
-        _inventoryData.Remove(uid);
+        Item retval = _inventoryData.at(uid);
+        _inventoryData.erase(uid);
         return retval;
     }
     return Item{};
@@ -37,13 +37,15 @@ Item Inventory::LootAnItem(uint32_t uid)
 
 void Inventory::LootAnotherInventory(Inventory & inventory)
 {
-    Vector<uint32_t> itemKeys = inventory._inventoryData.Keys();
+    std::vector<uint32_t> itemKeys;            //not the most elegant solution, but the only one I could find
+    for(auto elem : inventory._inventoryData)
+        itemKeys.push_back(elem.first);
 
-    for(int i = 0; i < itemKeys.Count(); i ++)
+    for(int i = 0; i < itemKeys.size(); i ++)
     {
-        Item lootedItem = inventory._inventoryData.At(itemKeys.At(i));
-        _inventoryData.Insert(lootedItem.UID(), lootedItem);
-        inventory._inventoryData.Remove(itemKeys.At(i));
+        Item lootedItem = inventory._inventoryData.at(itemKeys.at(i));
+        _inventoryData.emplace(lootedItem.UID(), lootedItem);
+        inventory._inventoryData.erase(itemKeys.at(i));
     }
 
 }
@@ -51,7 +53,7 @@ void Inventory::LootAnotherInventory(Inventory & inventory)
 
 bool Inventory::IsEmpty() const
 {
-    return _inventoryData.IsEmpty();
+    return _inventoryData.empty();
 
 }
 
@@ -61,10 +63,13 @@ bool Inventory::IsEmpty() const
 // print its contents though the Item::PrintData()
 void Inventory::PrintInventory() const
 {
-    Vector<uint32_t> keys = _inventoryData.Keys();
-    for(int i = 0; i < keys.Count(); i ++)
+    std::vector<uint32_t> keys;                    //using strange keys method
+    for(auto elem : _inventoryData)
+        keys.push_back(elem.first);
+
+    for(int i = 0; i < keys.size(); i ++)
     {
-        uint32_t key = keys.At(i);
-        std::cout << _inventoryData.At(key) << std::endl;
+        uint32_t key = keys.at(i);
+        std::cout << _inventoryData.at(key) << std::endl;
     }
 }

@@ -2,9 +2,11 @@
 #define ENCOUNTER_HPP
 
 
-#include "dictionary.hpp"
-#include "vector.hpp"
+//#include "dictionary.hpp"
+//#include "vector.hpp"
 #include "entity.hpp"
+#include <map>
+#include <vector>
 
 
 struct EntityNode
@@ -31,7 +33,7 @@ public:
 
 private:
 
-    Dictionary<uint32_t, Entity* > _encounterDictionary;
+    std::map<uint32_t, Entity* > _encounterDictionary;     //I changed this to std::map instead of dictionary, this might break things
 
     // provided
     void PrintBadAccessError(uint32_t uid) const;
