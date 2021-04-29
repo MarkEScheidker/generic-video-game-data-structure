@@ -1,9 +1,6 @@
 #ifndef ENCOUNTER_HPP
 #define ENCOUNTER_HPP
 
-
-//#include "dictionary.hpp"
-//#include "vector.hpp"
 #include "entity.hpp"
 #include <map>
 #include <vector>

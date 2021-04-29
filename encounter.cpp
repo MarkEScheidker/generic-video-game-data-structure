@@ -37,7 +37,7 @@ void Encounter::AddEntity(Entity *entity)
 {
     _encounterDictionary.emplace(entity->UID(), entity);   
 
-    if(entity->UID())  // emplace does not have a boolean output, so I need to check after adding it if it exists in the map
+    if(_encounterDictionary.count(entity->UID()) == 0)  // emplace does not have a boolean output, so I need to check after adding it if it exists in the map
     {
         std::cout << "FAILED TO ADD ENTITY: " << entity->UID() << std::endl;
     }

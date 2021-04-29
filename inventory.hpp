@@ -2,9 +2,7 @@
 #define INVENTORY_HPP
 
 #include "stack.hpp"
-//#include "dictionary.hpp"
 #include "item.hpp"
-//#include "vector.hpp"
 #include <vector>
 #include <map>
 

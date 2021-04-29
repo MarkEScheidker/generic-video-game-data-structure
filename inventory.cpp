@@ -12,9 +12,8 @@ void Inventory::Init(JsonItemBuilder &jsonBuilder, const std::vector<int> & uids
 {
     for(const auto & uid : uids)
     {
-        _inventoryData.emplace(uid, {jsonBuilder, static_cast<uint32_t>(uid)});  //emplace not working here, something about being overloaded
+        _inventoryData.emplace(uid, Item(jsonBuilder, static_cast<uint32_t>(uid)));  //emplace not working here, something about being overloaded
     }
-
 
 }
 

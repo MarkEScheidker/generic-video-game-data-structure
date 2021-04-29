@@ -2,7 +2,7 @@
 !*.cpp
 !*.hpp
 !README.md
-!Makefile
+!makefile
 !input*.txt
 !*.json
 !.gitignore
